@@ -27,7 +27,7 @@
     region: "{{ ec2_region }}"
     filters:
       vpc-id: "{{ vpc_net_facts.vpcs[0].id }}"
-  register: subnet_info
+  register: subnet_info.subnets
 
 - name: Set subnet name and ids
   set_fact:
