@@ -31,7 +31,9 @@
 
 - name: Set subnet name and ids
   set_fact:
-    subnets: "{{ subnet_info | json_query('subnets[*].subnet_id') }}"
+    subnets: "{{ subnet_info | json_query(subnet_query) }}"
+  vars:
+    subnet_query: "subnets[*].{subnet_id: subnet_id}"
 
 - name: "Find current, region-specific AMI."
   ec2_ami_info:
