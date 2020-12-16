@@ -27,11 +27,11 @@
     region: "{{ ec2_region }}"
     filters:
       vpc-id: "{{ vpc_net_facts.vpcs[0].id }}"
-  register: subnet_info.subnets
+  register: subnet_info
 
 - name: Set subnet name and ids
   set_fact:
-    subnets: "{{ subnet_info | json_query(query) }}"
+    subnets: "{{ subnet_info.subnets | json_query(query) }}"
   vars:
     query: "json[*].{subnet_id: subnet_id}"
 
