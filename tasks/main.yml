@@ -19,8 +19,8 @@
     region: "{{ ec2_region }}"
   register: sg_net_facts
 
-- debug:
-    var: sg_net_facts
+#- name: Get the SG Names and IDs
+#    var: sg_net_facts
 
 - name: Get the subnet IDs for {{ ec2_name_prefix }}-vpc
   ec2_vpc_subnet_info:
@@ -28,6 +28,12 @@
     filters:
       vpc-id: "{{ vpc_net_facts.vpcs[0].id }}"
   register: subnet_info
+
+- name: Set subnet name and ids
+  set_fact:
+    subnets: "{{ subnet_info | json_query(query) }}"
+  vars:
+    query: "json[*].{subnet_id: subnet_id}"
 
 - name: "Find current, region-specific AMI."
   ec2_ami_info:
