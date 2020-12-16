@@ -19,8 +19,11 @@
     region: "{{ ec2_region }}"
   register: sg_net_facts
 
-#- name: Get the SG Names and IDs
-#    var: sg_net_facts
+- name: Set the SG names and ids
+  set_fact:
+    sg_list: "{{ sg_net_facts | json_query(sg_query) }}"
+  vars:
+    sg_query: "security_groups[*].{group_id: group_id, name: group_name}"
 
 - name: Get the subnet IDs for {{ ec2_name_prefix }}-vpc
   ec2_vpc_subnet_info:
@@ -31,7 +34,7 @@
 
 - name: Set subnet name and ids
   set_fact:
-    subnets: "{{ subnet_info | json_query(subnet_query) }}"
+    subnet_list: "{{ subnet_info | json_query(subnet_query) }}"
   vars:
     subnet_query: "subnets[*].{subnet_id: subnet_id, name: tags.Name}"
 
