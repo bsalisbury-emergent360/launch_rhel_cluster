@@ -69,6 +69,7 @@
       #Name: "{{ ec2_name_prefix }} RHEL server {{ item.tags.Alias | regex_replace('^.*_(.*)$', '\\1') }}"
 #      Inventory: "{{ ec2_name_prefix }}"
 #      Stage: "instantiated"
+#      Platform: RHEL
 #  loop: "{{ subnet_info.subnets }}"
 #  register: ec2
 #
