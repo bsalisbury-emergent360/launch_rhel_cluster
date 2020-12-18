@@ -34,7 +34,7 @@
 
 - name: Select Public subnets
   debug:
-    msg: "{{ subnet_info.subnets | selectattr("tags[Name]", "search", "Public") }}"
+    msg: "{{ subnet_info.subnets | selectattr("tags[Name]", "search", "^Public$") }}"
 
 - name: Set subnet name and ids
   set_fact:
