@@ -32,6 +32,10 @@
       vpc-id: "{{ vpc_net_facts.vpcs[0].id }}"
   register: subnet_info
 
+- name: Select Public subnets
+  debug:
+    msg: "{{ subnet_info.subnets | selectattr("tags.Name", "search", "^.*Public.*$")"
+
 - name: Set subnet name and ids
   set_fact:
     subnet_list: "{{ subnet_info | json_query(subnet_query) }}"
