@@ -68,15 +68,15 @@
     wait_timeout: 500
     exact_count: "{{ instance_count }}"
     count_tag:
-      Name: "{{ ec2_name_prefix }} RHEL server {{ item.tags.Name | regex_replace('^.*-(.*)$', '\\1') }}"
+      Name: "{{ ec2_name_prefix }} RHEL server {{ item.Name | regex_replace('^.*-(.*)$', '\\1') }}"
     instance_tags:
       Role: service_cluster
       Cluster: "{{ ec2_name_prefix }}"
-      Name: "{{ ec2_name_prefix }} RHEL server {{ item.tags.Name | regex_replace('^.*-(.*)$', '\\1') }}"
+      Name: "{{ ec2_name_prefix }} RHEL server {{ item.Name | regex_replace('^.*-(.*)$', '\\1') }}"
       Inventory: "{{ ec2_name_prefix }}"
       Stage: "instantiated"
       Platform: RHEL
-  loop: "{{ subnet_list.subnet_ids }}"
+  loop: "{{ subnet_list }}"
   register: ec2
 
 - name: "Wait for connection on all hosts."
