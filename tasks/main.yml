@@ -34,7 +34,7 @@
 
 - name: Select Public subnets
   set_fact:
-    subnet_ids: "{{ subnet_info.subnets
+    public_subnets: "{{ subnet_info.subnets
       | selectattr('tags.Name', 'search', '^.*-Public-.*$')
       | list
     }}"
