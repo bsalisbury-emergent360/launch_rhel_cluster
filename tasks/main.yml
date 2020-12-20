@@ -22,7 +22,7 @@
   set_fact:
     public_sg: "{{ group_info.security_groups | json_query(group_query) }}"
   vars:
-    group_query: "[?group_name=='Corellia-SG'].group_id"
+    group_query: "[?group_name=="{{ ec2_name_prefix }}-SG"].group_id"
 
 - name: Get the subnet info for {{ ec2_name_prefix }}-vpc
   ec2_vpc_subnet_info:
