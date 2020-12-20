@@ -36,7 +36,7 @@
   set_fact:
     subnet_ids: "{{ subnet_info.subnets
       | selectattr('tags.Name', 'defined')
-      | map(attribute='subnet.id')
+      | map(attribute='subnet_id')
       | list
     }}"
 
