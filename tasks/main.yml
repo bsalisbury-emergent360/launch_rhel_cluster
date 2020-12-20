@@ -20,9 +20,17 @@
 
 - name: Select Public SG
   set_fact:
-    public_sg: "{{ group_info.security_groups | json_query(group_query) }}"
+    group_id: "{{ group_info.security_groups | json_query(group_query) }}"
   vars:
     group_query: "[?group_name=='{{ ec2_name_prefix }}-SG'].group_id"
+  when: tier == "Public"
+
+- name: Select Private SG
+  set_fact:
+    group_id: "{{ group_info.security_groups | json_query(group_query) }}"
+  vars:
+    group_query: "[?group_name=='default'].group_id"
+  when: tier == "Private"
 
 - name: Get the subnet info for {{ ec2_name_prefix }}-vpc
   ec2_vpc_subnet_info:
@@ -33,14 +41,23 @@
 
 - name: Select Public subnets
   set_fact:
-    public_subnets: "{{ subnet_info.subnets
+    subnet_data: "{{ subnet_info.subnets
       | selectattr('tags.Name', 'search', '^.*-Public-.*$')
       | list
     }}"
+  when: tier == "Public"
+
+- name: Select Private subnets
+  set_fact:
+    subnet_data: "{{ subnet_info.subnets
+      | selectattr('tags.Name', 'search', '^.*-Private-.*$')
+      | list
+    }}"
+  when: tier == "Private"
 
 - name: Set subnet list
   set_fact:
-    subnet_list: "{{ public_subnets | json_query(subnet_query) }}"
+    subnet_list: "{{ subnet_data | json_query(subnet_query) }}"
   vars:
     subnet_query: "[*].{id: subnet_id, name: tags.Name}"
 
@@ -62,7 +79,7 @@
     region: "{{ ec2_region }}"
     image: "{{ rhel_ami.image_id }}"
     instance_type: "{{ instance_type }}"
-    group_id: "{{ public_sg }}"
+    group_id: "{{ group_id }}"
     vpc_subnet_id: "{{ item.id }}"
     wait: yes
     wait_timeout: 500
