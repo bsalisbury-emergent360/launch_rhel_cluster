@@ -15,15 +15,8 @@
   ec2_group_info:
     filters:
       vpc-id: "{{ vpc_id }}"
-#      group-name: "{{ ec2_name_prefix }}-sg"
     region: "{{ ec2_region }}"
-  register: sg_net_facts
-
-- name: Set the SG names and ids
-  set_fact:
-    sg_list: "{{ sg_net_facts | json_query(sg_query) }}"
-  vars:
-    sg_query: "security_groups[*].{group_id: group_id, name: group_name}"
+  register: group_info
 
 - name: Get the subnet info for {{ ec2_name_prefix }}-vpc
   ec2_vpc_subnet_info:
@@ -57,32 +50,32 @@
     rhel_ami: "{{ found_amis.images | selectattr('name', 'defined') | sort(attribute='creation_date') | last }}"
   when: found_amis.images is defined
 
-#- name: "Start RHEL instances."
-#  ec2:
-#    key_name: "{{ ec2_name_prefix }}-key"
-#    region: "{{ ec2_region }}"
-#    image: "{{ rhel_ami.image_id }}"
-#    instance_type: "{{ instance_type }}"
-#   #group_id: "{{ sg_net_facts.security_groups[0].group_id }}"
-#    vpc_subnet_id: "{{ item.subnet_id }}"
-#    wait: yes
-#    wait_timeout: 500
-#    exact_count: "{{ instance_count }}"
-#    count_tag:
-#     #Name: "{{ ec2_name_prefix }} RHEL server {{ item.tags.Alias | regex_replace('^.*_(.*)$', '\\1') }}"
-#    instance_tags:
-#      Role: service_cluster
-#      Cluster: "{{ cluster_id }}"
-#     #Name: "{{ ec2_name_prefix }} RHEL server {{ item.tags.Alias | regex_replace('^.*_(.*)$', '\\1') }}"
-#      Inventory: "{{ ec2_name_prefix }}"
-#      Stage: "instantiated"
-#      Platform: RHEL
-#  loop: "{{ subnet_list.subnet_ids }}"
-#  register: ec2
-#
-#- name: "Wait for connection on all hosts."
-#  wait_for:
-#    host: "{{ item.tagged_instances[0].public_ip }}"
-#    port: 22
-#    timeout: 300
-#  loop: "{{ ec2.results }}"
+- name: "Start RHEL instances."
+  ec2:
+    key_name: "{{ ec2_name_prefix }}-key"
+    region: "{{ ec2_region }}"
+    image: "{{ rhel_ami.image_id }}"
+    instance_type: "{{ instance_type }}"
+    group_id: "{{ "sg_list | json_query("group_info.security_groups[?group_name=='{{ ec2_name_prefix }}-SG'].group_id") }}"
+    vpc_subnet_id: "{{ item.id }}"
+    wait: yes
+    wait_timeout: 500
+    exact_count: "{{ instance_count }}"
+    count_tag:
+      Name: "{{ ec2_name_prefix }} RHEL server {{ item.tags.Name | regex_replace('^.*-(.*)$', '\\1') }}"
+    instance_tags:
+      Role: service_cluster
+      Cluster: "{{ ec2_name_prefix }}"
+      Name: "{{ ec2_name_prefix }} RHEL server {{ item.tags.Name | regex_replace('^.*-(.*)$', '\\1') }}"
+      Inventory: "{{ ec2_name_prefix }}"
+      Stage: "instantiated"
+      Platform: RHEL
+  loop: "{{ subnet_list.subnet_ids }}"
+  register: ec2
+
+- name: "Wait for connection on all hosts."
+  wait_for:
+    host: "{{ item.tagged_instances[0].public_ip }}"
+    port: 22
+    timeout: 300
+  loop: "{{ ec2.results }}"
