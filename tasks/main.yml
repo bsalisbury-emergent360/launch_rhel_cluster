@@ -18,6 +18,12 @@
     region: "{{ ec2_region }}"
   register: group_info
 
+- name: Select Public SG
+  set_fact:
+    public_sg: "{{ group_info.security_groups | json_query(group_query) }}"
+  vars:
+    group_query: "[?group_name=='Corellia-SG'].group_id") }}"
+
 - name: Get the subnet info for {{ ec2_name_prefix }}-vpc
   ec2_vpc_subnet_info:
     region: "{{ ec2_region }}"
@@ -56,7 +62,7 @@
     region: "{{ ec2_region }}"
     image: "{{ rhel_ami.image_id }}"
     instance_type: "{{ instance_type }}"
-    group_id: "{{ "sg_list | json_query("group_info.security_groups[?group_name=='{{ ec2_name_prefix }}-SG'].group_id") }}"
+    group_id: "{{ public_sg }}"
     vpc_subnet_id: "{{ item.id }}"
     wait: yes
     wait_timeout: 500
