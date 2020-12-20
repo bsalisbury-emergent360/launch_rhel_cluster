@@ -35,7 +35,7 @@
 - name: Select Public subnets
   set_fact:
     subnet_ids: "{{ subnet_info.subnets
-      | selectattr('tags.Name', 'search', '^Public$')
+      | selectattr('tags.Name', 'search', '^Corellia-Public-B$')
       | map(attribute='subnet_id')
       | list
     }}"
