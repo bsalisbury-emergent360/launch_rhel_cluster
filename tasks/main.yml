@@ -77,6 +77,8 @@
       Stage: "instantiated"
       Platform: RHEL
   loop: "{{ subnet_list }}"
+  loop_control:
+    label: "{{ item }}"
   register: ec2
 
 - name: "Wait for connection on all hosts."
@@ -85,3 +87,5 @@
     port: 22
     timeout: 300
   loop: "{{ ec2.results }}"
+  loop_control:
+    label: "{{ item['tagged_instances'][0]['private_ip'] }}"
