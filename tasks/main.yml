@@ -38,7 +38,7 @@
       | list
     }}"
 
-- name: Set subnet name and ids
+- name: Set subnet list
   set_fact:
     subnet_list: "{{ public_subnets | json_query(subnet_query) }}"
   vars:
@@ -68,11 +68,11 @@
     wait_timeout: 500
     exact_count: "{{ instance_count }}"
     count_tag:
-      Name: "{{ ec2_name_prefix }} RHEL server {{ item.Name | regex_replace('^.*-(.*)$', '\\1') }}"
+      Name: "{{ ec2_name_prefix }} RHEL server {{ item.name | regex_replace('^.*-(.*)$', '\\1') }}"
     instance_tags:
       Role: service_cluster
       Cluster: "{{ ec2_name_prefix }}"
-      Name: "{{ ec2_name_prefix }} RHEL server {{ item.Name | regex_replace('^.*-(.*)$', '\\1') }}"
+      Name: "{{ ec2_name_prefix }} RHEL server {{ item.name | regex_replace('^.*-(.*)$', '\\1') }}"
       Inventory: "{{ ec2_name_prefix }}"
       Stage: "instantiated"
       Platform: RHEL
