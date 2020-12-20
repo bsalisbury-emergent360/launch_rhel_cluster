@@ -2,3 +2,4 @@
 # defaults file for launch_rhel_ami
 ami_name: "RHEL-8.2-x86_64-Minimal-10GiB-HVM*"
 instance_count: 1
+tier: "Public"
