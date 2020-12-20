@@ -36,7 +36,6 @@
   set_fact:
     subnet_ids: "{{ subnet_info.subnets
       | selectattr('tags.Name', 'search', '^.*-Public-.*$')
-      | map(attribute='subnet_id')
       | list
     }}"
 
@@ -64,21 +63,21 @@
 #    region: "{{ ec2_region }}"
 #    image: "{{ rhel_ami.image_id }}"
 #    instance_type: "{{ instance_type }}"
-    #group_id: "{{ sg_net_facts.security_groups[0].group_id }}"
+#   #group_id: "{{ sg_net_facts.security_groups[0].group_id }}"
 #    vpc_subnet_id: "{{ item.subnet_id }}"
 #    wait: yes
 #    wait_timeout: 500
 #    exact_count: "{{ instance_count }}"
 #    count_tag:
-      #Name: "{{ ec2_name_prefix }} RHEL server {{ item.tags.Alias | regex_replace('^.*_(.*)$', '\\1') }}"
+#     #Name: "{{ ec2_name_prefix }} RHEL server {{ item.tags.Alias | regex_replace('^.*_(.*)$', '\\1') }}"
 #    instance_tags:
 #      Role: service_cluster
 #      Cluster: "{{ cluster_id }}"
-      #Name: "{{ ec2_name_prefix }} RHEL server {{ item.tags.Alias | regex_replace('^.*_(.*)$', '\\1') }}"
+#     #Name: "{{ ec2_name_prefix }} RHEL server {{ item.tags.Alias | regex_replace('^.*_(.*)$', '\\1') }}"
 #      Inventory: "{{ ec2_name_prefix }}"
 #      Stage: "instantiated"
 #      Platform: RHEL
-#  loop: "{{ subnet_info.subnets }}"
+#  loop: "{{ subnet_list.subnet_ids }}"
 #  register: ec2
 #
 #- name: "Wait for connection on all hosts."
@@ -87,4 +86,3 @@
 #    port: 22
 #    timeout: 300
 #  loop: "{{ ec2.results }}"
-
