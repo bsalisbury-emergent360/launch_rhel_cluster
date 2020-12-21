@@ -93,7 +93,7 @@
       Inventory: "{{ ec2_name_prefix }}"
       Stage: "instantiated"
       Platform: RHEL
-      Zone: "{{ item.name | regex_replace('^.*-(.*)$', '\\1')) }}"
+      Zone: "{{ item.name | regex_replace('^.*-(.*)$', '\\1') }}"
   loop: "{{ subnet_list }}"
   loop_control:
     label: "{{ item }}"
