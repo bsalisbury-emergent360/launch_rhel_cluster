@@ -22,14 +22,14 @@
   set_fact:
     group_id: "{{ group_info.security_groups | json_query(group_query) }}"
   vars:
-    group_query: "[?group_name=='{{ ec2_name_prefix }}-SG'].group_id"
+    group_query: "[?group_name=='{{ ec2_name_prefix }}-Public-SG'].group_id"
   when: tier == "Public"
 
 - name: Select Private SG
   set_fact:
     group_id: "{{ group_info.security_groups | json_query(group_query) }}"
   vars:
-    group_query: "[?group_name=='default'].group_id"
+    group_query: "[?group_name=='{{ ec2_name_prefix }}-Private-SG'].group_id"
   when: tier == "Private"
 
 - name: Get the subnet info for {{ ec2_name_prefix }}-vpc
