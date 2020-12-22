@@ -94,6 +94,7 @@
       Stage: "instantiated"
       Platform: RHEL
       Zone: "{{ item.name | regex_replace('^.*-(.*)$', '\\1') }}"
+      Tier: "{{ item.name | regex_replace('^.*?-(.*?)-.*$', '\\1') }}"
   loop: "{{ subnet_list }}"
   loop_control:
     label: "{{ item }}"
