@@ -87,7 +87,7 @@
     count_tag:
       Name: "{{ ec2_name_prefix }} RHEL server {{ item.name | regex_replace('^.*?-(.*)$', '\\1') }}"
     instance_tags:
-      Role: service_cluster
+      Role: "{{ instance_role }}"
       Cluster: "{{ ec2_name_prefix }}"
       Name: "{{ ec2_name_prefix }} RHEL server {{ item.name | regex_replace('^.*?-(.*)$', '\\1') }}"
       Inventory: "{{ ec2_name_prefix }}"
